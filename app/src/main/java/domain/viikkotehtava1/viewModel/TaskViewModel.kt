@@ -4,19 +4,29 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import domain.viikkotehtava1.domain.Task
 import domain.viikkotehtava1.domain.mockTodos
-import kotlin.collections.plus
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 
 class TaskViewModel : ViewModel() {
     var isSortedByDate by mutableStateOf(false)
     var tasks by mutableStateOf(listOf<Task>())
+        private set
 
-      private set
+    var editingTask by mutableStateOf<Task?>(null)
+        private set
+
     private var allTasks: List<Task> = mockTodos
 
     init {
-        tasks = mockTodos
+        tasks = allTasks
+    }
+
+    fun openEditDialog(task: Task) {
+        editingTask = task
+    }
+
+    fun closeEditDialog() {
+        editingTask = null
     }
 
     fun addTask(task: Task) {
@@ -24,36 +34,42 @@ class TaskViewModel : ViewModel() {
         tasks = allTasks
     }
 
-    fun toggleDone(id: Int) {
-        allTasks = allTasks.map { task ->
-            if (task.id == id) task.copy(done = !task.done) else task
-        }
-        tasks = tasks.map { task ->
-            if (task.id == id) task.copy(done = !task.done) else task
-        }
-    }
-
     fun removeTask(id: Int) {
+        allTasks = allTasks.filter { it.id != id }
         tasks = tasks.filter { it.id != id }
     }
 
-    fun filterByDone(done: Boolean) {
-        tasks = tasks.filter { it.done == done }
+    fun toggleDone(id: Int) {
+        val updateLambda = { task: Task ->
+            if (task.id == id) task.copy(done = !task.done) else task
+        }
+        allTasks = allTasks.map(updateLambda)
+        tasks = tasks.map(updateLambda)
     }
-    fun showAll() {
 
+    fun updateTask(id: Int, newTitle: String, newDescription: String) {
+        val updateLambda = { t: Task ->
+            if (t.id == id) t.copy(title = newTitle, description = newDescription) else t
+        }
+        allTasks = allTasks.map(updateLambda)
+        tasks = tasks.map(updateLambda)
+        closeEditDialog()
+    }
+
+    fun filterByDone(done: Boolean) {
+        tasks = allTasks.filter { it.done == done }
+    }
+
+    fun showAll() {
         tasks = allTasks
     }
 
     fun sortByDueDate() {
-        if (isSortedByDate) {
-            allTasks = allTasks.sortedBy { it.id }
-            tasks = allTasks
-            isSortedByDate = false
+        isSortedByDate = !isSortedByDate
+        tasks = if (isSortedByDate) {
+            allTasks.sortedBy { it.dueDate }
         } else {
-            allTasks = allTasks.sortedBy { it.dueDate }
-            tasks = allTasks
-            isSortedByDate = true
+            allTasks.sortedBy { it.id }
         }
     }
 }

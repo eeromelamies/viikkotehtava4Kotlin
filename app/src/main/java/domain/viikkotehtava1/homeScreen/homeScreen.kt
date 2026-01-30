@@ -22,23 +22,35 @@ import androidx.compose.foundation.lazy.items
 
 @Composable
 fun HomeScreen(
-
     viewModel: TaskViewModel = viewModel()
 ) {
     val tasks = viewModel.tasks
     var newTaskTitle by remember { mutableStateOf("") }
 
+    viewModel.editingTask?.let { task ->
+        DetailScreen(
+            task = task,
+            onDismiss = { viewModel.closeEditDialog() },
+            onSave = { newTitle, newDesc ->
+                viewModel.updateTask(task.id, newTitle, newDesc)
+            },
+            onDelete = {
+
+                viewModel.removeTask(task.id)
+                viewModel.closeEditDialog()
+            }
+        )
+    }
+
     LazyColumn {
         item {
-
             TextField(
                 value = newTaskTitle,
                 onValueChange = { newTaskTitle = it },
                 modifier = Modifier.padding(8.dp),
                 label = { Text("New task") },
                 singleLine = true,
-
-            )
+                )
 
             Button(
                 onClick = {
@@ -79,7 +91,8 @@ fun HomeScreen(
                 Text(
                     text = if (viewModel.isSortedByDate) "Sort by ID" else "Sort by due date"
                 )
-            }}
+            }
+        }
 
 
         items(tasks) { task ->
@@ -106,13 +119,15 @@ fun HomeScreen(
                         )
                     }
                 }
-                }
+            }
 
-                Button(onClick = { viewModel.removeTask(task.id) }) {
-                    Text("Delete")
-                }
-
+            Button(onClick = { viewModel.removeTask(task.id) }) {
+                Text("Delete")
+            }
+            Button(onClick = { viewModel.openEditDialog(task) }) {
+                Text("Update task")
             }
         }
     }
+}
 
