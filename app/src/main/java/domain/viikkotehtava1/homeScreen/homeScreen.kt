@@ -18,14 +18,26 @@ import androidx.compose.runtime.*
 import domain.viikkotehtava1.viewModel.TaskViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarMonth
 
 
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    viewModel: TaskViewModel = viewModel()
+    viewModel: TaskViewModel,
+    onTaskClick: (Int) -> Unit = {},   // oletus: ei tee mitään
+    onAddClick: () -> Unit = {},       // oletus: ei tee mitään
+    onNavigateCalendar: () -> Unit = {} // jos käytössä
 ) {
     val tasks = viewModel.tasks
     var newTaskTitle by remember { mutableStateOf("") }
+
 
     viewModel.editingTask?.let { task ->
         DetailScreen(
@@ -44,6 +56,17 @@ fun HomeScreen(
 
     LazyColumn {
         item {
+            TopAppBar(
+                title = { Text("task list") },
+                actions = {
+                    IconButton(onClick = onNavigateCalendar) {
+                        Icon(
+                            imageVector = Icons.Default.CalendarMonth,
+                            contentDescription = "Go to calendar"
+                        )
+                    }
+                }
+            )
             TextField(
                 value = newTaskTitle,
                 onValueChange = { newTaskTitle = it },
@@ -130,4 +153,7 @@ fun HomeScreen(
         }
     }
 }
+
+
+
 

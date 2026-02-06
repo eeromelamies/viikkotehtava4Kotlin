@@ -11,6 +11,7 @@ class TaskViewModel : ViewModel() {
     var isSortedByDate by mutableStateOf(false)
     var tasks by mutableStateOf(listOf<Task>())
         private set
+    var isAddTaskDialogOpen by mutableStateOf(false)
 
     var editingTask by mutableStateOf<Task?>(null)
         private set

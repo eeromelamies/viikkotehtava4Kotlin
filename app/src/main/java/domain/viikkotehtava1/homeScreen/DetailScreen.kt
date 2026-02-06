@@ -45,9 +45,7 @@ fun DetailScreen(
                     label = { Text("Description") },
                     modifier = Modifier.fillMaxWidth()
                 )
-                TextButton(onClick = onDelete, colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)) {
-                    Text("Delete Task")
-                }
+
             }
         }
     )
