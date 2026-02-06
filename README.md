@@ -6,7 +6,7 @@ Navigointi Composessa perustuu deklaratiiviseen malliin, jossa käyttöliittymä
 
 ---
 
-##Mitä ovat NavHost ja NavController.
+## Mitä ovat NavHost ja NavController.
 
 - NavHost on Composable-funktio, joka toimii näyttämönä kaikille niille näkymille, joiden välillä navigoidaan.
 - NavController on keskeinen API Jetpack Compose Navigationissa. Se pitää kirjaa sovelluksen tilasta ja ohjaa siirtymisiä.
